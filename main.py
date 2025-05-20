@@ -3,7 +3,8 @@ from Film import Film
 from MyException import *
 from datetime import date
 
-
+def wyczyszEkran() -> None:
+    print("\n"*100)
 def main() -> None:
     print("Witaj w WatchList")
     print("1. Wczytaj Kolekcje")
@@ -12,7 +13,7 @@ def main() -> None:
     try:
         match inputUser:
             case "1":
-                mainloop()
+                mainloop(input("Podaj sciezke do pliku .csv\n"))
             case "2":
                 mainloop()
             case _:
@@ -36,7 +37,6 @@ def dodajFilm() -> list[str]:
         gatunek = input("Podaj gatunek: \n")
         if gatunek not in Film.gatunki :
             raise InvalidMovieType
-            print("Dostępne gatunki do wyboru: \n" + Film.gatunki)
 
         status = input("Wybierz status: {obejrzany/nieobejrzany} \n")
         if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
@@ -60,12 +60,13 @@ def dodajFilm() -> list[str]:
         print("Podano zly status wybierz: {obejrzany/nieobejrzany}")
     except InvalidMovieType:
         print("Nie ma takiego gatunku do wyboru, wybierz gatunek poniżej.")
+        print("Dostępne gatunki do wyboru: \n", Film.gatunki)
 
     return wynik
 
 
-def mainloop():
-    kolekcja = Kolekcja.Kolekcja()
+def mainloop(sciezka = None):
+    kolekcja: object = Kolekcja.Kolekcja(sciezka=sciezka)
     while True:
         print("1. Dodaj Film")
         print("2. Edytuj Film")
@@ -73,6 +74,7 @@ def mainloop():
         print("4. Wyswietl Kolekcje")
         print("5. Komentuj")
         userInput = input()
+        wyczyszEkran()
         match userInput:
             case "1":
                 wynik = dodajFilm()

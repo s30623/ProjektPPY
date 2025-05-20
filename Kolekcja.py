@@ -1,9 +1,27 @@
 import Film
 from MyException import *
-class Kolekcja:
-    def __init__(self) -> None:
-        self.filmy = list() #lista filmow
 
+class Kolekcja:
+    def __init__(self,sciezka:str=None) -> None:
+        self.filmy = list()  # lista filmow
+        if sciezka is not None:
+            try:
+                if ".csv" not in sciezka:
+                    raise InvalidFileFormat
+                with open(sciezka) as f:
+                    for linijka in f.readlines():
+                        podziel:list[str] = linijka.split(";")
+                        self.dodajFilm(tytul=podziel[0],
+                                       rezyser=podziel[1],
+                                       rok_produkcji=int(podziel[2]),
+                                       gatunek=podziel[3],
+                                       status=podziel[4],
+                                       ocena=int(podziel[5]),
+                                       opis=podziel[6])
+            except InvalidFileFormat:
+                print("Lista nie jest w csv")
+            except FileNotFoundError:
+                print("Nie znaleziono listy")
     def sprawdzCzyFilmIstnieje(self,film:Film) -> True | False:
         for film_z_kolekcji in self.filmy:
             tytul_ten_sam = film.tytul.lower().strip() == film_z_kolekcji.tytul.lower().strip()
@@ -20,11 +38,13 @@ class Kolekcja:
                 raise MovieAlreadyExists
             self.filmy.append(film)
         except MovieAlreadyExists:
-            print("Film juz istnieje w kolekcji")
+            print(f"Film {film.tytul} juz istnieje w kolekcji")
 
     def wyswietlKolekcje(self) -> list[str]:
+        print("\n-----------------------------------\n")
         for id, film in enumerate(self.filmy):
             print(f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
+        print("\n-----------------------------------\n")
         return self.filmy
 
     def usunFilm(self,film:Film) -> str:

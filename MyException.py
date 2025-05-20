@@ -15,3 +15,5 @@ class WrongStatus(Exception):
 
 class InvalidMovieType(Exception):
     '''Brak gatunku w bazie'''
+class InvalidFileFormat(Exception):
+    '''Zly format pliku'''
