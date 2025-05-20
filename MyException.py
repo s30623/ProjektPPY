@@ -12,3 +12,6 @@ class InvalidUserChoice(Exception):
 
 class WrongStatus(Exception):
     '''Zły status obejrzenia filmu'''
+
+class InvalidMovieType(Exception):
+    '''Brak gatunku w bazie'''

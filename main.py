@@ -1,4 +1,5 @@
 import Kolekcja
+from Film import Film
 from MyException import *
 from datetime import date
 
@@ -33,7 +34,9 @@ def dodajFilm() -> list[str]:
             raise InvalidMovieYear
 
         gatunek = input("Podaj gatunek: \n")
-        
+        if gatunek not in Film.gatunki :
+            raise InvalidMovieType
+            print("Dostępne gatunki do wyboru: \n" + Film.gatunki)
 
         status = input("Wybierz status: {obejrzany/nieobejrzany} \n")
         if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
@@ -55,6 +58,8 @@ def dodajFilm() -> list[str]:
         print("Podano zly rok dla filmu")
     except WrongStatus:
         print("Podano zly status wybierz: {obejrzany/nieobejrzany}")
+    except InvalidMovieType:
+        print("Nie ma takiego gatunku do wyboru, wybierz gatunek poniżej.")
 
     return wynik
 

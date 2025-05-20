@@ -39,6 +39,6 @@ class Kolekcja:
         except MovieDoesNotExist:
             print("Nie udało się usunąć filmu z ")
 
-    def editFilm(self,film:Film) -> None:
+    def edytujFilm(self,film:Film) -> None:
         for film_z_kolekcji in self.filmy:
             pass
