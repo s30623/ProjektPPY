@@ -17,3 +17,5 @@ class InvalidMovieType(Exception):
     '''Brak gatunku w bazie'''
 class InvalidFileFormat(Exception):
     '''Zly format pliku'''
+class InvalidRatingScale(Exception):
+    '''Ocena nie jest w zakresie 1-10'''

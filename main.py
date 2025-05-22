@@ -3,7 +3,7 @@ from Film import Film
 from MyException import *
 from datetime import date
 
-def wyczyszEkran() -> None:
+def wyczyscEkran() -> None:
     print("\n"*100)
 def main() -> None:
     print("Witaj w WatchList")
@@ -42,6 +42,8 @@ def dodajFilm() -> list[str]:
         if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
             raise WrongStatus
         ocena = int(input("Podaj ocene: (1-10)\n"))
+        if ocena < 1 or ocena > 10:
+            raise InvalidRatingScale
         opis = input("Podaj opis:\n")
 
         wynik.append(tytul)
@@ -61,6 +63,8 @@ def dodajFilm() -> list[str]:
     except InvalidMovieType:
         print("Nie ma takiego gatunku do wyboru, wybierz gatunek poniżej.")
         print("Dostępne gatunki do wyboru: \n", Film.gatunki)
+    except InvalidRatingScale:
+        print("Ocena nie jest w zakresie od 1 do 10")
 
     return wynik
 
@@ -74,25 +78,33 @@ def mainloop(sciezka = None):
         print("4. Wyswietl Kolekcje")
         print("5. Komentuj")
         userInput = input()
-        wyczyszEkran()
-        match userInput:
-            case "1":
-                wynik = dodajFilm()
-                if len(wynik) == 7:
-                    kolekcja.dodajFilm(tytul=wynik[0],
+        wyczyscEkran()
+        try:
+            match userInput:
+                case "1":
+                    wynik = dodajFilm()
+                    if len(wynik) == 7:
+                        kolekcja.dodajFilm(tytul=wynik[0],
                                    rezyser=wynik[1],
                                    rok_produkcji=wynik[2],
                                    gatunek=wynik[3],
                                    status=wynik[4],
                                    ocena=wynik[5],
                                    opis=wynik[6])
-            case "2":
-                kolekcja.edytujFilm()
-            case "3":
-                kolekcja.usunFilm()
-            case "4":
-                kolekcja.wyswietlKolekcje()
-
+                case "2":
+                    kolekcja.wyswietlKolekcje()
+                    indeks = int(input("Podaj numer:"))
+                    kolekcja.edytujFilm(kolekcja.filmy[indeks-1])
+                case "3":
+                    kolekcja.wyswietlKolekcje()
+                    indeks = int(input("Podaj numer:"))
+                    kolekcja.usunFilm(kolekcja.filmy[indeks-1])
+                case "4":
+                    kolekcja.wyswietlKolekcje()
+        except IndexError:
+            print("Podaj cyfre w zakresie filmów")
+        except NameError:
+            print("Podaj cyfre")
 
 if __name__ == '__main__':
     main()
