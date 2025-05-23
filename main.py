@@ -3,8 +3,8 @@ from Film import Film
 from MyException import *
 from datetime import date
 
-def wyczyscEkran() -> None:
-    print("\n"*100)
+def wyczyscEkran(n = 100) -> None:
+    print("\n"*n)
 def main() -> None:
     print("Witaj w WatchList")
     print("1. Wczytaj Kolekcje")
