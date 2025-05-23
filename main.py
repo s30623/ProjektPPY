@@ -70,13 +70,17 @@ def dodajFilm() -> list[str]:
 
 
 def mainloop(sciezka = None):
-    kolekcja: object = Kolekcja.Kolekcja(sciezka=sciezka)
+    kolekcja: Kolekcja = Kolekcja.Kolekcja(sciezka=sciezka)
     while True:
         print("1. Dodaj Film")
         print("2. Edytuj Film")
         print("3. Usun Film")
         print("4. Wyswietl Kolekcje")
         print("5. Komentuj")
+        print("6. Sortuj")
+        print("7. Filtruj")
+        print("8. Statystyki")
+        print("9. Exportuj do pliku")
         userInput = input()
         wyczyscEkran()
         try:
@@ -101,6 +105,16 @@ def mainloop(sciezka = None):
                     kolekcja.usunFilm(kolekcja.filmy[indeks-1])
                 case "4":
                     kolekcja.wyswietlKolekcje()
+                case "5":
+                    pass
+                case "6":
+                    pass
+                case "7.":
+                    pass
+                case "8":
+                    pass
+                case "9":
+                    kolekcja.exportujDoPliku()
         except IndexError:
             print("Podaj cyfre w zakresie filmów")
         except NameError:

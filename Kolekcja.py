@@ -125,3 +125,12 @@ class Kolekcja:
             case "7":
                 print(f"Obecny opis: {film.opis}")
                 film.opis = input("\nPodaj nowy opis:\n")
+
+    def exportujDoPliku(self):
+        try:
+            with open(input("Podaj nazwe pliku") + ".csv","w") as w:
+                for film in self.filmy:
+                    linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.opis}\n"
+                    w.write(linijka)
+        except Exception as e:
+            print(e)
