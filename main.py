@@ -106,7 +106,7 @@ def mainloop(sciezka = None):
                 case "4":
                     kolekcja.wyswietlKolekcje()
                 case "5":
-                    pass
+                    kolekcja.dodajKomentarz()
                 case "6":
                     pass
                 case "7":

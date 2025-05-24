@@ -150,3 +150,26 @@ class Kolekcja:
         except InvalidMovieType:
             print("Brak takiego gatunku w bazie")
             print("Gatunki: ", Film.Film.gatunki)
+
+    def dodajKomentarz(self) -> None:
+
+        wskazTytul = input("Podaj tytuł filmu do zmiany:\n").strip().lower()
+        wskazRezysera = input("Podaj rezysera filmu do zmiany:\n").strip().lower()
+        try:
+            wskazRok = int(input("Podaj rok produkcji:\n").strip())
+        except ValueError:
+            print("Rok musi być liczbą")
+            return
+
+        komentarz = input("Podaj komentarz:\n").strip()
+
+        for film in self.filmy:
+            if (film.tytul.strip().lower() == wskazTytul
+                and film.rezyser.strip().lower() == wskazRezysera
+                and film.rok_produkcji == wskazRok
+            ) :
+                film.komentarze.append(komentarz)
+                print("Komentarz dodany poprawnie.")
+                return
+
+        print("Nie znaleziono filmu o podanych danych.")
