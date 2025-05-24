@@ -9,6 +9,8 @@ class Kolekcja:
         self.filtrGatunek: str = None
         self.filtrRok: int = None
         self.filtrStatus: str = None
+        self.sortujAtrybut: str = None
+        self.sortujKolejnosc:bool = False
         if sciezka is not None:
             try:
                 if ".csv" not in sciezka:
@@ -51,8 +53,21 @@ class Kolekcja:
             print(f"Film {film.tytul} juz istnieje w kolekcji")
 
     def wyswietlKolekcje(self) -> None:
+        wyswietl_filmy = self.filmy[:]
+        if self.sortujAtrybut is not None:
+            key = None
+            match self.sortujAtrybut:
+                case "TYTUL":
+                    key = lambda x: x.tytul
+                case "ROK":
+                    key = lambda x: x.rok_produkcji
+                case "GATUNEK":
+                    key = lambda x: x.gatunek
+                case "OCENA":
+                    key = lambda x: x.ocena
+            wyswietl_filmy = sorted(self.filmy,key=key,reverse=self.sortujKolejnosc)
         print("\n-----------------------------------\n")
-        for id, film in enumerate(self.filmy):
+        for id, film in enumerate(wyswietl_filmy):
             filtrujTytul = self.filtrTytul is None or self.filtrTytul.lower().strip() in film.tytul.lower().strip()
             filtrujGatunek = self.filtrGatunek is None or self.filtrGatunek == film.gatunek
             filtrujRok = self.filtrRok is None or self.filtrRok == film.rok_produkcji
@@ -203,3 +218,43 @@ class Kolekcja:
             raise MovieDoesNotExist
         except MovieDoesNotExist:
             print("Nie znaleziono filmu o podanych danych.")
+
+    def sortuj(self):
+        print("Podaj po jakim atrybucie chcesz sortowac")
+        print(f"Obecny filtr: {self.sortujAtrybut}, Kolejnosc: {'malejaca' if self.sortujKolejnosc else 'rosnaca'}")
+        print("1. Tytul")
+        print("2. Rok produkcji")
+        print("3. Gatunek")
+        print("4. Ocena")
+        print("5. Resetuj")
+        wybor = input("Podaj liczbe od 1-5:\n")
+        try:
+            match wybor:
+                case "1":
+                    self.sortujAtrybut = "TYTUL"
+                case "2":
+                    self.sortujAtrybut = "ROK"
+                case "3":
+                    self.sortujAtrybut = "GATUNEK"
+                case "4":
+                    self.sortujAtrybut = "OCENA"
+                case "5":
+                    self.sortujAtrybut = None
+                    self.sortujKolejnosc = False
+                case _:
+                    raise InvalidUserChoice
+            print("Wybierz kolejnosc sortowania:")
+            print("1. Malejaca")
+            print("2. Rosnaca")
+            wybor = input()
+            match wybor:
+                case "1":
+                    self.sortujKolejnosc = True
+                case "2":
+                    self.sortujKolejnosc = False
+                case _:
+                    raise InvalidUserChoice
+        except InvalidUserChoice:
+            print("Podaj liczbe w odpowiednim zakresie")
+        except Exception as e:
+            print(e)

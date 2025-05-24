@@ -24,6 +24,6 @@ class Film:
             f"Gatunek: {self.gatunek}\n"
             f"Status: {self.status}\n"
             f"Ocena: {self.ocena}\n"
-            f"Opis: {self.opis}"
-            f"Komentarze: {', '.join(self.komentarze) if self.komentarze else 'brak'}"
+            f"Opis: {self.opis}\n"
+            f"Komentarze: {', '.join(self.komentarze) if self.komentarze else 'brak'}\n"
         )

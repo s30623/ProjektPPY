@@ -110,7 +110,7 @@ def mainloop(sciezka = None):
                     indeks = int(input("Podaj numer:"))
                     kolekcja.dodajKomentarz(kolekcja.filmy[indeks-1])
                 case "6":
-                    pass
+                    kolekcja.sortuj()
                 case "7":
                     kolekcja.filtruj()
                 case "8":
