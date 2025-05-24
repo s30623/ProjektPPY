@@ -145,7 +145,7 @@ class Kolekcja:
 
             for film in self.filmy:
                 if film.gatunek.strip().lower() == mojgatunek:
-                    print(film.__str__())
+                    print(str(film))
 
         except InvalidMovieType:
             print("Brak takiego gatunku w bazie")
