@@ -91,6 +91,7 @@ class Kolekcja:
             print("Nie udało się usunąć filmu z ")
 
     def edytujFilm(self, film: Film) -> None:
+        print(str(film))
         print(f"Co chcesz zedytowac w filmie: {film.tytul}")
         print("1. Tytul")
         print("2. Rezyser")
