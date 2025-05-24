@@ -106,7 +106,9 @@ def mainloop(sciezka = None):
                 case "4":
                     kolekcja.wyswietlKolekcje()
                 case "5":
-                    kolekcja.dodajKomentarz()
+                    kolekcja.wyswietlKolekcje()
+                    indeks = int(input("Podaj numer:"))
+                    kolekcja.dodajKomentarz(kolekcja.filmy[indeks-1])
                 case "6":
                     pass
                 case "7":

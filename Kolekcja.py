@@ -8,6 +8,7 @@ class Kolekcja:
         self.filtrTytul: str = None
         self.filtrGatunek: str = None
         self.filtrRok: int = None
+        self.filtrStatus: str = None
         if sciezka is not None:
             try:
                 if ".csv" not in sciezka:
@@ -55,7 +56,8 @@ class Kolekcja:
             filtrujTytul = self.filtrTytul is None or self.filtrTytul.lower().strip() in film.tytul.lower().strip()
             filtrujGatunek = self.filtrGatunek is None or self.filtrGatunek == film.gatunek
             filtrujRok = self.filtrRok is None or self.filtrRok == film.rok_produkcji
-            if filtrujTytul and filtrujGatunek and filtrujRok:
+            filtrujStatus = self.filtrRok is None or self.filtrStatus == film.status
+            if filtrujTytul and filtrujGatunek and filtrujRok and filtrujStatus:
                 print(f"[{id + 1}] {str(film)}")
                 #print(f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
         print("\n-----------------------------------\n")
@@ -150,9 +152,10 @@ class Kolekcja:
         print("1. Tytul")
         print("2. Gatunek")
         print("3. Rok produkcji")
-        print("4. Wyczyść filtry")
+        print("4. Status")
+        print("5. Wyczyść filtry")
         try:
-            wybor = input("Podaj liczbe 1-4:\n")
+            wybor = input("Podaj liczbe 1-5:\n")
             match wybor:
                 case "1":
                     self.filtrTytul = input("Podaj tytul filmu (moze byc niepelny):\n")
@@ -170,10 +173,19 @@ class Kolekcja:
                         print("Nie podano liczby")
                     except Exception as e:
                         print(e)
-                case "4":
+                case "4.":
+                    status = input("Podaj status (obejrzany/nieobejrzany):\n")
+                    try:
+                        if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
+                            raise WrongStatus
+                        self.filtrStatus = status
+                    except WrongStatus:
+                        print("Podano zly status:")
+                case "5":
                     self.filtrTytul = None
                     self.filtrGatunek = None
                     self.filtrRok = None
+                    self.filtrStatus = None
                 case _:
                     raise InvalidUserChoice
         except InvalidUserChoice:
@@ -181,25 +193,13 @@ class Kolekcja:
         except Exception as e:
             print(e)
 
-    def dodajKomentarz(self) -> None:
-
-        wskazTytul = input("Podaj tytuł filmu do zmiany:\n").strip().lower()
-        wskazRezysera = input("Podaj rezysera filmu do zmiany:\n").strip().lower()
-        try:
-            wskazRok = int(input("Podaj rok produkcji:\n").strip())
-        except ValueError:
-            print("Rok musi być liczbą")
-            return
-
+    def dodajKomentarz(self, film) -> None:
         komentarz = input("Podaj komentarz:\n").strip()
-
-        for film in self.filmy:
-            if (film.tytul.strip().lower() == wskazTytul
-                    and film.rezyser.strip().lower() == wskazRezysera
-                    and film.rok_produkcji == wskazRok
-            ) :
-                film.komentarze.append(komentarz)
-                print("Komentarz dodany poprawnie.")
-                return
-
-        print("Nie znaleziono filmu o podanych danych.")
+        try:
+            for film_z_kolekcji in self.filmy:
+                if (film_z_kolekcji.tytul.lower().strip() == film.tytul.lower().strip()):
+                    film.komentarze.append(komentarz)
+                    print("Komentarz dodany poprawnie.")
+            raise MovieDoesNotExist
+        except MovieDoesNotExist:
+            print("Nie znaleziono filmu o podanych danych.")
