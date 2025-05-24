@@ -17,6 +17,10 @@ class Kolekcja:
                     raise InvalidFileFormat
                 with open(sciezka, encoding="utf8") as f:
                     for linijka in f.readlines():
+                        if linijka.count(";") != 5:
+                            raise InvalidFileFormat
+                        if not (linijka[2].isdigit() and linijka[5].isdigit()):
+                            raise InvalidFileFormat
                         podziel: list[str] = linijka.split(";")
                         self.dodajFilm(tytul=podziel[0],
                                        rezyser=podziel[1],
@@ -178,7 +182,7 @@ class Kolekcja:
                 case "2":
                     print(f"Istniejace gatunki {Film.Film.gatunki}")
                     gatunek = input("Podaj gatunek filmu:\n")
-                    if gatunek.lower().strip() not in gatunek:
+                    if gatunek.lower().strip() not in Film.Film.gatunki:
                         raise InvalidMovieType
                     self.filtrGatunek = gatunek
                 case "3":
@@ -216,6 +220,7 @@ class Kolekcja:
                 if (film_z_kolekcji.tytul.lower().strip() == film.tytul.lower().strip()):
                     film.komentarze.append(komentarz)
                     print("Komentarz dodany poprawnie.")
+                    return
             raise MovieDoesNotExist
         except MovieDoesNotExist:
             print("Nie znaleziono filmu o podanych danych.")
