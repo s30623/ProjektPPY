@@ -9,7 +9,7 @@ class Kolekcja:
             try:
                 if ".csv" not in sciezka:
                     raise InvalidFileFormat
-                with open(sciezka) as f:
+                with open(sciezka, encoding="utf8") as f:
                     for linijka in f.readlines():
                         podziel: list[str] = linijka.split(";")
                         self.dodajFilm(tytul=podziel[0],
