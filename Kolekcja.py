@@ -17,11 +17,11 @@ class Kolekcja:
                     raise InvalidFileFormat
                 with open(sciezka, encoding="utf8") as f:
                     for linijka in f.readlines():
-                        if linijka.count(";") != 5:
-                            raise InvalidFileFormat
-                        if not (linijka[2].isdigit() and linijka[5].isdigit()):
+                        if linijka.count(";") != 6:
                             raise InvalidFileFormat
                         podziel: list[str] = linijka.split(";")
+                        if not (podziel[2].isdigit() and podziel[5].isdigit()):
+                            raise InvalidFileFormat
                         self.dodajFilm(tytul=podziel[0],
                                        rezyser=podziel[1],
                                        rok_produkcji=int(podziel[2]),
