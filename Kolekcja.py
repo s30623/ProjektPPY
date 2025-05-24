@@ -71,7 +71,7 @@ class Kolekcja:
             filtrujTytul = self.filtrTytul is None or self.filtrTytul.lower().strip() in film.tytul.lower().strip()
             filtrujGatunek = self.filtrGatunek is None or self.filtrGatunek == film.gatunek
             filtrujRok = self.filtrRok is None or self.filtrRok == film.rok_produkcji
-            filtrujStatus = self.filtrRok is None or self.filtrStatus == film.status
+            filtrujStatus = self.filtrStatus is None or self.filtrStatus == film.status
             if filtrujTytul and filtrujGatunek and filtrujRok and filtrujStatus:
                 print(f"[{id + 1}] {str(film)}")
                 #print(f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
