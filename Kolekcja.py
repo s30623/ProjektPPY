@@ -5,6 +5,9 @@ from MyException import *
 class Kolekcja:
     def __init__(self, sciezka: str = None) -> None:
         self.filmy = list()  # lista filmow
+        self.filtrTytul: str = None
+        self.filtrGatunek: str = None
+        self.filtrRok: int = None
         if sciezka is not None:
             try:
                 if ".csv" not in sciezka:
@@ -23,6 +26,8 @@ class Kolekcja:
                 print("Lista nie jest w csv")
             except FileNotFoundError:
                 print("Nie znaleziono listy")
+            except Exception as e:
+                print(e)
 
     def sprawdzCzyFilmIstnieje(self, film: Film) -> True | False:
         for film_z_kolekcji in self.filmy:
@@ -47,8 +52,12 @@ class Kolekcja:
     def wyswietlKolekcje(self) -> None:
         print("\n-----------------------------------\n")
         for id, film in enumerate(self.filmy):
-            print(
-                f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
+            filtrujTytul = self.filtrTytul is None or self.filtrTytul.lower().strip() in film.tytul.lower().strip()
+            filtrujGatunek = self.filtrGatunek is None or self.filtrGatunek == film.gatunek
+            filtrujRok = self.filtrRok is None or self.filtrRok == film.rok_produkcji
+            if filtrujTytul and filtrujGatunek and filtrujRok:
+                print(f"[{id + 1}] {str(film)}")
+                #print(f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
         print("\n-----------------------------------\n")
         #return self.filmy
 
@@ -98,7 +107,7 @@ class Kolekcja:
                     if nowy_gatunek not in Film.Film.gatunki:
                         raise InvalidMovieType
                     film.gatunek = nowy_gatunek
-                except:
+                except InvalidMovieType:
                     print(f"Podany gatunek nie istnieje")
                     print("Gatunki: ", Film.Film.gatunki)
                     film.gatunek = kopia_gatunku
@@ -130,26 +139,47 @@ class Kolekcja:
         try:
             with open(input("Podaj nazwe pliku:\n") + ".csv","w") as w:
                 for film in self.filmy:
-                    linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.ocena};{film.opis}"
-                    w.write(linijka)
+                    linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.ocena};{film.opis.strip()}"
+                    w.write(linijka + '\n')
         except Exception as e:
             print(e)
 
-    def filtrujPoGatunku(self):
-
-        mojgatunek = input("Podaj gatunek:\n").strip().lower()
-
+    def filtruj(self):
+        print("Podaj na czym chcesz ustawic filtr")
+        print(f"Zastosowane filtry: Tytul: {self.filtrTytul}, Gatunek: {self.filtrGatunek}, Rok produkcji: {self.filtrRok}")
+        print("1. Tytul")
+        print("2. Gatunek")
+        print("3. Rok produkcji")
+        print("4. Wyczyść filtry")
         try:
-            if mojgatunek not in Film.Film.gatunki:
-                raise InvalidMovieType
-
-            for film in self.filmy:
-                if film.gatunek.strip().lower() == mojgatunek:
-                    print(str(film))
-
-        except InvalidMovieType:
-            print("Brak takiego gatunku w bazie")
-            print("Gatunki: ", Film.Film.gatunki)
+            wybor = input("Podaj liczbe 1-4:\n")
+            match wybor:
+                case "1":
+                    self.filtrTytul = input("Podaj tytul filmu (moze byc niepelny):\n")
+                case "2":
+                    print(f"Istniejace gatunki {Film.Film.gatunki}")
+                    gatunek = input("Podaj gatunek filmu:\n")
+                    if gatunek.lower().strip() not in gatunek:
+                        raise InvalidMovieType
+                    self.filtrGatunek = gatunek
+                case "3":
+                    try:
+                        rok_produkcji = int(input("Podaj rok produkcji:\n"))
+                        self.filtrRok = rok_produkcji
+                    except ValueError:
+                        print("Nie podano liczby")
+                    except Exception as e:
+                        print(e)
+                case "4":
+                    self.filtrTytul = None
+                    self.filtrGatunek = None
+                    self.filtrRok = None
+                case _:
+                    raise InvalidUserChoice
+        except InvalidUserChoice:
+            print("Podano zla liczbe")
+        except Exception as e:
+            print(e)
 
     def dodajKomentarz(self) -> None:
 
@@ -165,8 +195,8 @@ class Kolekcja:
 
         for film in self.filmy:
             if (film.tytul.strip().lower() == wskazTytul
-                and film.rezyser.strip().lower() == wskazRezysera
-                and film.rok_produkcji == wskazRok
+                    and film.rezyser.strip().lower() == wskazRezysera
+                    and film.rok_produkcji == wskazRok
             ) :
                 film.komentarze.append(komentarz)
                 print("Komentarz dodany poprawnie.")
