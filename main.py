@@ -109,8 +109,9 @@ def mainloop(sciezka = None):
                     pass
                 case "6":
                     pass
-                case "7.":
-                    pass
+                case "7":
+                    kolekcja = Kolekcja.Kolekcja(sciezka)
+                    kolekcja.filtrujPoGatunku()
                 case "8":
                     pass
                 case "9":

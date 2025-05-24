@@ -14,3 +14,15 @@ class Film:
                "melodramat", "fantasy", "kryminał",
                "thriller", "historyczny", "psychologiczny",
                "anime", "inny")
+
+    def __str__(self):
+        return (
+            f"Tytuł: {self.tytul}\n"
+            f"Reżyser: {self.rezyser}\n"
+            f"Rok produkcji: {self.rok_produkcji}\n"
+            f"Gatunek: {self.gatunek}\n"
+            f"Status: {self.status}\n"
+            f"Ocena: {self.ocena}\n"
+            f"Opis: {self.opis}\n"
+            f"Komentarze: {', '.join(self.komentarze) if self.komentarze else 'brak'}"
+        )

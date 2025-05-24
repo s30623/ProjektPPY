@@ -134,3 +134,19 @@ class Kolekcja:
                     w.write(linijka)
         except Exception as e:
             print(e)
+
+    def filtrujPoGatunku(self):
+
+        mojgatunek = input("Podaj gatunek:\n").strip().lower()
+
+        try:
+            if mojgatunek not in Film.Film.gatunki:
+                raise InvalidMovieType
+
+            for film in self.filmy:
+                if film.gatunek.strip().lower() == mojgatunek:
+                    print(film.__str__())
+
+        except InvalidMovieType:
+            print("Brak takiego gatunku w bazie")
+            print("Gatunki: ", Film.Film.gatunki)
