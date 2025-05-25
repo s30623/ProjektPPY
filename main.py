@@ -114,7 +114,7 @@ def mainloop(sciezka = None):
                 case "7":
                     kolekcja.filtruj()
                 case "8":
-                    pass
+                    kolekcja.generujStatystyki()
                 case "9":
                     kolekcja.exportujDoPliku()
         except IndexError:

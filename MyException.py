@@ -19,3 +19,9 @@ class InvalidFileFormat(Exception):
     '''Zly format pliku'''
 class InvalidRatingScale(Exception):
     '''Ocena nie jest w zakresie 1-10'''
+
+class NoWatchedMovies(Exception):
+    '''Brak obejrzanych filmów'''
+
+class NoData(Exception):
+    '''Brak danych'''

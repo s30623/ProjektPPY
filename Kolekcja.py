@@ -1,3 +1,8 @@
+import statistics
+from collections import defaultdict
+
+from matplotlib import pyplot as plt
+
 import Film
 from MyException import *
 
@@ -264,3 +269,69 @@ class Kolekcja:
             print("Podaj liczbe w odpowiednim zakresie")
         except Exception as e:
             print(e)
+
+##nie wiem gdzie to dodac, myslsalam zeby moze do tego pierwszego case'a ale nie wiem
+    def hisotriaObjerzanych(self):
+        print("\n### Historia obejrzanych filmów ###\n")
+
+        try:
+            obejrzane = [film for film in self.filmy if film.status.strip().lower() == "watched"]
+            if not obejrzane:
+                raise NoWatchedMovies
+
+            for film in obejrzane:
+                print(str(film))
+                print("-" * 40)
+
+        except NoWatchedMovies:
+            print("Brak obejrzanych filmów w danej kolekcji")
+
+    def generujStatystyki(self):
+        print("\n### Statystyki ###\n")
+
+        try:
+            if not self.filmy:
+                raise NoData
+        except NoData:
+            print("Brak danych do wygenerowania statystyk")
+
+        gatunki_counter = defaultdict(int)
+        for film in self.filmy:
+            gatunki_counter[film.gatunek] += 1
+
+        plt.figure(figsize=(12, 8))
+        plt.bar(gatunki_counter.keys(), gatunki_counter.values())
+        plt.title("Liczba filmów o poszczególnych gatunkach")
+        plt.xlabel("Gatunek")
+        plt.ylabel("Liczba filmów")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+        gatunki_Grades = defaultdict(list)
+        for film in self.filmy:
+            gatunki_Grades[film.gatunek].append(film.ocena)
+
+
+        meanGrades = {gatunek: statistics.mean(oceny) for gatunek, oceny in gatunki_Grades.items()}
+
+        plt.figure(figsize=(12, 8))
+        plt.bar(meanGrades.keys(), meanGrades.values())
+        plt.title("Średnia ocena filmów o poszczególnych gatunkach")
+        plt.xlabel("Gatunek")
+        plt.ylabel("Średnia ocena")
+        plt.ylim(0, 10)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+        best_movies = sorted(self.filmy, key=lambda x: x.ocena, reverse=True)[:5]
+
+        plt.figure(figsize=(12, 8))
+        plt.bar([film.tytul for film in best_movies], [film.ocena for film in best_movies])
+        plt.title("Top 5 filmów")
+        plt.ylabel("Ocena")
+        plt.ylim(0, 10)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
