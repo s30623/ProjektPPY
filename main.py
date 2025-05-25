@@ -80,7 +80,8 @@ def mainloop(sciezka = None):
         print("6. Sortuj")
         print("7. Filtruj")
         print("8. Statystyki")
-        print("9. Exportuj do pliku")
+        print("9. Historia Obejrzanych")
+        print("10. Exportuj do pliku")
         userInput = input()
         wyczyscEkran()
         try:
@@ -116,6 +117,8 @@ def mainloop(sciezka = None):
                 case "8":
                     kolekcja.generujStatystyki()
                 case "9":
+                    kolekcja.hisotriaObjerzanych()
+                case "10":
                     kolekcja.exportujDoPliku()
         except IndexError:
             print("Podaj cyfre w zakresie filmów")
