@@ -229,6 +229,8 @@ class Kolekcja:
             raise MovieDoesNotExist
         except MovieDoesNotExist:
             print("Nie znaleziono filmu o podanych danych.")
+        except Exception as e:
+            print(e)
 
     def sortuj(self):
         print("Podaj po jakim atrybucie chcesz sortowac")

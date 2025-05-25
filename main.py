@@ -1,3 +1,5 @@
+from typing import Tuple, List, Any
+
 import Kolekcja
 from Film import Film
 from MyException import *
@@ -23,8 +25,8 @@ def main() -> None:
         print("Wybierz 1 albo 2")
 
 
-def dodajFilm() -> list[str]:
-    wynik = list()
+def dodajFilm() -> tuple[str, str, int, str, str, int, str]:
+    wynik = tuple()
     try:
         tytul = input("Podaj tytul filmu: \n")
         rezyser = input("Podaj rezysera: \n")
@@ -46,15 +48,7 @@ def dodajFilm() -> list[str]:
             raise InvalidRatingScale
         opis = input("Podaj opis:\n")
 
-        wynik.append(tytul)
-        wynik.append(rezyser)
-        wynik.append(rok_produkcji)
-        wynik.append(gatunek)
-        wynik.append(status)
-        wynik.append(ocena)
-        wynik.append(opis)
-
-        return wynik
+        return (tytul,rezyser,rok_produkcji,gatunek,status,ocena,opis)
 
     except InvalidMovieYear:
         print("Podano zly rok dla filmu")
@@ -65,6 +59,10 @@ def dodajFilm() -> list[str]:
         print("Dostępne gatunki do wyboru: \n", Film.gatunki)
     except InvalidRatingScale:
         print("Ocena nie jest w zakresie od 1 do 10")
+    except ValueError:
+        print("Podano zla wartosc")
+    except Exception as e:
+        print(e)
 
     return wynik
 
@@ -124,6 +122,8 @@ def mainloop(sciezka = None):
             print("Podaj cyfre w zakresie filmów")
         except NameError:
             print("Podaj cyfre")
+        except Exception as e:
+            print(e)
 
 if __name__ == '__main__':
     main()
