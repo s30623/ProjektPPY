@@ -25,7 +25,7 @@ def main() -> None:
         print("Wybierz 1 albo 2")
 
 
-def dodajFilm() -> tuple[str, str, int, str, str, int, str]:
+def dodajFilm() -> tuple[str, str, int, str, str, int, str,str]:
     wynik = tuple()
     try:
         tytul = input("Podaj tytul filmu: \n")
@@ -40,20 +40,19 @@ def dodajFilm() -> tuple[str, str, int, str, str, int, str]:
         if gatunek not in Film.gatunki :
             raise InvalidMovieType
 
-        status = input("Wybierz status: {obejrzany/nieobejrzany} \n")
-        if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
+        status = input("Wybierz status: {watched/unwatched} \n")
+        if not (status.lower().strip() == "watched" or status.lower().strip() == "unwatched"):
             raise WrongStatus
         ocena = int(input("Podaj ocene: (1-10)\n"))
         if ocena < 1 or ocena > 10:
             raise InvalidRatingScale
         opis = input("Podaj opis:\n")
-
-        return (tytul,rezyser,rok_produkcji,gatunek,status,ocena,opis)
+        return (tytul,rezyser,rok_produkcji,gatunek,status,ocena,opis,'brak')
 
     except InvalidMovieYear:
         print("Podano zly rok dla filmu")
     except WrongStatus:
-        print("Podano zly status wybierz: {obejrzany/nieobejrzany}")
+        print("Podano zly status wybierz: {watched/unwatched}")
     except InvalidMovieType:
         print("Nie ma takiego gatunku do wyboru, wybierz gatunek poniżej.")
         print("Dostępne gatunki do wyboru: \n", Film.gatunki)
@@ -86,7 +85,7 @@ def mainloop(sciezka = None):
             match userInput:
                 case "1":
                     wynik = dodajFilm()
-                    if len(wynik) == 7:
+                    if len(wynik) == 8:
                         kolekcja.dodajFilm(tytul=wynik[0],
                                    rezyser=wynik[1],
                                    rok_produkcji=wynik[2],
@@ -122,8 +121,8 @@ def mainloop(sciezka = None):
             print("Podaj cyfre w zakresie filmów")
         except NameError:
             print("Podaj cyfre")
-        except Exception as e:
-            print(e)
+        # except Exception as e:
+        #     print(e)
 
 if __name__ == '__main__':
     main()

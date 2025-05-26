@@ -1,5 +1,5 @@
 class Film:
-    def __init__(self, tytul, rezyser, rok_produkcji, gatunek, status, ocena, opis, komentarze=None) -> None:
+    def __init__(self, tytul, rezyser, rok_produkcji, gatunek, status, ocena, opis, komentarze='brak') -> None:
         self.tytul: str = tytul
         self.rezyser: str = rezyser
         self.rok_produkcji: int = rok_produkcji
@@ -7,7 +7,7 @@ class Film:
         self.status: str = status
         self.ocena: float = ocena
         self.opis: str = opis
-        self.komentarze: list[str] = komentarze if komentarze is not None else []
+        self.komentarze: str = komentarze
 
     gatunki = ("horror", "bajka", "science-fiction",
                "kreskówka", "komedia", "akcji",
@@ -25,5 +25,5 @@ class Film:
             f"Status: {self.status}\n"
             f"Ocena: {self.ocena}\n"
             f"Opis: {self.opis}\n"
-            f"Komentarze: {', '.join(self.komentarze) if self.komentarze else 'brak'}\n"
+            f"Komentarz: {self.komentarze}\n"
         )

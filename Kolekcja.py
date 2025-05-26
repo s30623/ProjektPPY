@@ -2,8 +2,9 @@ import statistics
 from collections import defaultdict
 
 from matplotlib import pyplot as plt
-
+from datetime import date
 import Film
+import MyException
 from MyException import *
 
 
@@ -22,22 +23,38 @@ class Kolekcja:
                     raise InvalidFileFormat
                 with open(sciezka, encoding="utf8") as f:
                     for linijka in f.readlines():
-                        if linijka.count(";") != 6:
+                        if linijka.count(";") != 7:
                             raise InvalidFileFormat
                         podziel: list[str] = linijka.split(";")
                         if not (podziel[2].isdigit() and podziel[5].isdigit()):
                             raise InvalidFileFormat
+                        if podziel[3] not in Film.Film.gatunki:
+                            raise InvalidMovieType
+                        if podziel[4] not in ("watched","unwatched"):
+                            raise WrongStatus
+                        if int(podziel[5]) < 1 or int(podziel[5]) > 10:
+                            raise InvalidRatingScale
+                        today = int(date.today().strftime("%Y"))
+                        if int(podziel[2]) < 1895 or int(podziel[2]) > today:
+                            raise InvalidRatingScale
                         self.dodajFilm(tytul=podziel[0],
                                        rezyser=podziel[1],
                                        rok_produkcji=int(podziel[2]),
                                        gatunek=podziel[3],
                                        status=podziel[4],
                                        ocena=int(podziel[5]),
-                                       opis=podziel[6])
+                                       opis=podziel[6],
+                                       komentarze = 'brak')
             except InvalidFileFormat:
-                print("Lista nie jest w csv")
+                print("Lista nie jest w csv\n")
             except FileNotFoundError:
-                print("Nie znaleziono listy")
+                print("Nie znaleziono listy\n")
+            except InvalidMovieType:
+                print("Podano zly gatunek\n")
+            except InvalidRatingScale:
+                print("Ocena nie jest w zakresie 1-10\n")
+            except InvalidMovieYear:
+                print("Rok filmu jest \n")
             except Exception as e:
                 print(e)
 
@@ -51,15 +68,15 @@ class Kolekcja:
                 return True
         return False
 
-    def dodajFilm(self, tytul, rezyser, rok_produkcji, gatunek, status, ocena, opis) -> None:
+    def dodajFilm(self, tytul, rezyser, rok_produkcji, gatunek, status, ocena, opis, komentarze = 'brak') -> None:
         try:
             film = Film.Film(tytul=tytul, rezyser=rezyser, rok_produkcji=rok_produkcji, gatunek=gatunek, status=status,
-                             ocena=ocena, opis=opis)
+                             ocena=ocena, opis=opis, komentarze=komentarze)
             if self.sprawdzCzyFilmIstnieje(film):
                 raise MovieAlreadyExists
             self.filmy.append(film)
         except MovieAlreadyExists:
-            print(f"Film {film.tytul} juz istnieje w kolekcji")
+            print(f"Film {film.tytul} juz istnieje w kolekcji\n")
 
     def wyswietlKolekcje(self) -> None:
         wyswietl_filmy = self.filmy[:]
@@ -83,21 +100,19 @@ class Kolekcja:
             filtrujStatus = self.filtrStatus is None or self.filtrStatus == film.status
             if filtrujTytul and filtrujGatunek and filtrujRok and filtrujStatus:
                 print(f"[{id + 1}] {str(film)}")
-                #print(f"[{id + 1}] Tytul: {film.tytul} \n-Rok: {film.rok_produkcji} \n-Gatunek: {film.gatunek} \n-Status: {film.status} \n-Ocena: {film.ocena}")
         print("\n-----------------------------------\n")
-        #return self.filmy
 
     def usunFilm(self, film: Film) -> str:
         try:
             for film_z_kolekcji in self.filmy:
                 if (film_z_kolekcji.tytul.lower().strip() == film.tytul.lower().strip()):
                     self.filmy.remove(film_z_kolekcji)
-                    return "Udało usunąc się film z kolekcji"
+                    return "Udało usunąc się film z kolekcji\n"
 
             raise MovieDoesNotExist
 
         except MovieDoesNotExist:
-            print("Nie udało się usunąć filmu z ")
+            print("Nie udało się usunąć filmu z \n")
 
     def edytujFilm(self, film: Film) -> None:
         print(str(film))
@@ -125,7 +140,7 @@ class Kolekcja:
                 film.rezyser = input("Podaj nowego rezysera:\n")
             case "3":
                 print(f"Obecny rok produkcji: {film.rok_produkcji}")
-                film.rok_produkcji = input("Podaj nowy rok produkcji")
+                film.rok_produkcji = input("Podaj nowy rok produkcji:\n")
             case "4":
                 print(f"Obecny Gatunek: {film.gatunek}")
                 kopia_gatunku = film.gatunek
@@ -140,9 +155,9 @@ class Kolekcja:
                     film.gatunek = kopia_gatunku
             case "5":
                 print(f"Obecny status: {film.status}")
-                status = input("Podaj nowy status: obejrzany/nieobejrzany\n")
+                status = input("Podaj nowy status: watched/unwatched\n")
                 try:
-                    if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
+                    if not (status.lower().strip() == "watched" or status.lower().strip() == "unwatched"):
                         raise WrongStatus
                     film.status = status
                 except WrongStatus:
@@ -150,7 +165,7 @@ class Kolekcja:
             case "6":
                 print(f"Obecna ocena {film.ocena}")
                 try:
-                    nowa_ocena = int(input("Podaj nową ocenę"))
+                    nowa_ocena = int(input("Podaj nową ocenę:\n"))
                     if nowa_ocena < 1 or nowa_ocena > 10:
                         raise InvalidRatingScale
                     film.ocena = nowa_ocena
@@ -166,7 +181,7 @@ class Kolekcja:
         try:
             with open(input("Podaj nazwe pliku:\n") + ".csv","w") as w:
                 for film in self.filmy:
-                    linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.ocena};{film.opis.strip()}"
+                    linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.ocena};{film.opis.strip()};{film.komentarze}"
                     w.write(linijka + '\n')
         except Exception as e:
             print(e)
@@ -199,9 +214,9 @@ class Kolekcja:
                     except Exception as e:
                         print(e)
                 case "4.":
-                    status = input("Podaj status (obejrzany/nieobejrzany):\n")
+                    status = input("Podaj status (watched/unwatched):\n")
                     try:
-                        if not (status.lower().strip() == "obejrzany" or status.lower().strip() == "nieobejrzany"):
+                        if not (status.lower().strip() == "watched" or status.lower().strip() == "unwatched"):
                             raise WrongStatus
                         self.filtrStatus = status
                     except WrongStatus:
@@ -218,15 +233,20 @@ class Kolekcja:
         except Exception as e:
             print(e)
 
-    def dodajKomentarz(self, film) -> None:
-        komentarz = input("Podaj komentarz:\n").strip()
+    def dodajKomentarz(self, film:Film.Film) -> None:
+        print(f"Obecny komentarz: {film.komentarze}")
+        print("1. Usuń komentarz\n2. Edytuj komentarz")
+        cozrobic = input()
         try:
-            for film_z_kolekcji in self.filmy:
-                if (film_z_kolekcji.tytul.lower().strip() == film.tytul.lower().strip()):
-                    film.komentarze.append(komentarz)
-                    print("Komentarz dodany poprawnie.")
-                    return
-            raise MovieDoesNotExist
+            match cozrobic:
+                case "1":
+                    film.komentarze = 'brak'
+                case "2":
+                    film.komentarze = input("Podaj komentarz:")
+                case _:
+                    raise InvalidUserChoice
+        except InvalidUserChoice:
+            print("Podano zla liczbe")
         except MovieDoesNotExist:
             print("Nie znaleziono filmu o podanych danych.")
         except Exception as e:
@@ -272,7 +292,6 @@ class Kolekcja:
         except Exception as e:
             print(e)
 
-##nie wiem gdzie to dodac, myslsalam zeby moze do tego pierwszego case'a ale nie wiem
     def hisotriaObjerzanych(self):
         print("\n### Historia obejrzanych filmów ###\n")
 
@@ -297,7 +316,9 @@ class Kolekcja:
         except NoData:
             print("Brak danych do wygenerowania statystyk")
 
-        gatunki_counter = defaultdict(int)
+        gatunki_counter = dict()
+        for gatunek in Film.Film.gatunki:
+            gatunki_counter[gatunek] = 0
         for film in self.filmy:
             gatunki_counter[film.gatunek] += 1
 
@@ -310,12 +331,21 @@ class Kolekcja:
         plt.tight_layout()
         plt.show()
 
-        gatunki_Grades = defaultdict(list)
+        gatunki_Grades = dict()
+        for gatunek in Film.Film.gatunki:
+            gatunki_Grades[gatunek] = list()
+
         for film in self.filmy:
             gatunki_Grades[film.gatunek].append(film.ocena)
 
+        meanGrades = {}
+        for gatunek, oceny in gatunki_Grades.items():
+            if len(oceny) > 1:
+                statystka = statistics.mean(oceny)
+                meanGrades[gatunek] = statystka
+            else:
+                meanGrades[gatunek] = 0
 
-        meanGrades = {gatunek: statistics.mean(oceny) for gatunek, oceny in gatunki_Grades.items()}
 
         plt.figure(figsize=(12, 8))
         plt.bar(meanGrades.keys(), meanGrades.values())
