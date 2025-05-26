@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from matplotlib import pyplot as plt
 from datetime import date
-import Film
+from Film import Film
 import MyException
 from MyException import *
 
@@ -28,7 +28,7 @@ class Kolekcja:
                         podziel: list[str] = linijka.split(";")
                         if not (podziel[2].isdigit() and podziel[5].isdigit()):
                             raise InvalidFileFormat
-                        if podziel[3] not in Film.Film.gatunki:
+                        if podziel[3] not in Film.gatunki:
                             raise InvalidMovieType
                         if podziel[4] not in ("watched","unwatched"):
                             raise WrongStatus
@@ -70,7 +70,7 @@ class Kolekcja:
 
     def dodajFilm(self, tytul, rezyser, rok_produkcji, gatunek, status, ocena, opis, komentarze = 'brak') -> None:
         try:
-            film = Film.Film(tytul=tytul, rezyser=rezyser, rok_produkcji=rok_produkcji, gatunek=gatunek, status=status,
+            film = Film(tytul=tytul, rezyser=rezyser, rok_produkcji=rok_produkcji, gatunek=gatunek, status=status,
                              ocena=ocena, opis=opis, komentarze=komentarze)
             if self.sprawdzCzyFilmIstnieje(film):
                 raise MovieAlreadyExists
@@ -146,12 +146,12 @@ class Kolekcja:
                 kopia_gatunku = film.gatunek
                 try:
                     nowy_gatunek = input("Podaj nowy gatunek:\n")
-                    if nowy_gatunek not in Film.Film.gatunki:
+                    if nowy_gatunek not in Film.gatunki:
                         raise InvalidMovieType
                     film.gatunek = nowy_gatunek
                 except InvalidMovieType:
                     print(f"Podany gatunek nie istnieje")
-                    print("Gatunki: ", Film.Film.gatunki)
+                    print("Gatunki: ", Film.gatunki)
                     film.gatunek = kopia_gatunku
             case "5":
                 print(f"Obecny status: {film.status}")
@@ -200,9 +200,9 @@ class Kolekcja:
                 case "1":
                     self.filtrTytul = input("Podaj tytul filmu (moze byc niepelny):\n")
                 case "2":
-                    print(f"Istniejace gatunki {Film.Film.gatunki}")
+                    print(f"Istniejace gatunki {Film.gatunki}")
                     gatunek = input("Podaj gatunek filmu:\n")
-                    if gatunek.lower().strip() not in Film.Film.gatunki:
+                    if gatunek.lower().strip() not in Film.gatunki:
                         raise InvalidMovieType
                     self.filtrGatunek = gatunek
                 case "3":
@@ -233,7 +233,7 @@ class Kolekcja:
         except Exception as e:
             print(e)
 
-    def dodajKomentarz(self, film:Film.Film) -> None:
+    def dodajKomentarz(self, film:Film) -> None:
         print(f"Obecny komentarz: {film.komentarze}")
         print("1. Usuń komentarz\n2. Edytuj komentarz")
         cozrobic = input()
@@ -317,7 +317,7 @@ class Kolekcja:
             print("Brak danych do wygenerowania statystyk")
 
         gatunki_counter = dict()
-        for gatunek in Film.Film.gatunki:
+        for gatunek in Film.gatunki:
             gatunki_counter[gatunek] = 0
         for film in self.filmy:
             gatunki_counter[film.gatunek] += 1
@@ -332,7 +332,7 @@ class Kolekcja:
         plt.show()
 
         gatunki_Grades = dict()
-        for gatunek in Film.Film.gatunki:
+        for gatunek in Film.gatunki:
             gatunki_Grades[gatunek] = list()
 
         for film in self.filmy:

@@ -1,6 +1,6 @@
 from typing import Tuple, List, Any
 
-import Kolekcja
+from Kolekcja import Kolekcja
 from Film import Film
 from MyException import *
 from datetime import date
@@ -25,7 +25,7 @@ def main() -> None:
         print("Wybierz 1 albo 2")
 
 
-def dodajFilm() -> tuple[str, str, int, str, str, int, str,str]:
+def dodajFilm() -> tuple[str, str, int, str, str, int, str, str]:
     wynik = tuple()
     try:
         tytul = input("Podaj tytul filmu: \n")
@@ -67,7 +67,7 @@ def dodajFilm() -> tuple[str, str, int, str, str, int, str,str]:
 
 
 def mainloop(sciezka = None):
-    kolekcja: Kolekcja = Kolekcja.Kolekcja(sciezka=sciezka)
+    kolekcja: Kolekcja = Kolekcja(sciezka=sciezka)
     while True:
         print("1. Dodaj Film")
         print("2. Edytuj Film")
