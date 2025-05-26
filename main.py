@@ -1,5 +1,3 @@
-from typing import Tuple, List, Any
-
 from Kolekcja import Kolekcja
 from Film import Film
 from MyException import *
@@ -79,6 +77,7 @@ def mainloop(sciezka = None):
         print("8. Statystyki")
         print("9. Historia Obejrzanych")
         print("10. Exportuj do pliku")
+        print("11. Koniec")
         userInput = input()
         wyczyscEkran()
         try:
@@ -94,19 +93,19 @@ def mainloop(sciezka = None):
                                    ocena=wynik[5],
                                    opis=wynik[6])
                 case "2":
-                    kolekcja.wyswietlKolekcje()
+                    filmy: list[Film] = kolekcja.wyswietlKolekcje()
                     indeks = int(input("Podaj numer:"))
-                    kolekcja.edytujFilm(kolekcja.filmy[indeks-1])
+                    kolekcja.edytujFilm(filmy[indeks-1])
                 case "3":
-                    kolekcja.wyswietlKolekcje()
+                    filmy: list[Film] = kolekcja.wyswietlKolekcje()
                     indeks = int(input("Podaj numer:"))
-                    kolekcja.usunFilm(kolekcja.filmy[indeks-1])
+                    kolekcja.usunFilm(filmy[indeks-1])
                 case "4":
                     kolekcja.wyswietlKolekcje()
                 case "5":
-                    kolekcja.wyswietlKolekcje()
+                    filmy: list[Film] = kolekcja.wyswietlKolekcje()
                     indeks = int(input("Podaj numer:"))
-                    kolekcja.dodajKomentarz(kolekcja.filmy[indeks-1])
+                    kolekcja.dodajKomentarz(filmy[indeks-1])
                 case "6":
                     kolekcja.sortuj()
                 case "7":
@@ -117,6 +116,8 @@ def mainloop(sciezka = None):
                     kolekcja.hisotriaObjerzanych()
                 case "10":
                     kolekcja.exportujDoPliku()
+                case "11":
+                    break
         except IndexError:
             print("Podaj cyfre w zakresie filmów")
         except NameError:

@@ -1,10 +1,8 @@
 import statistics
-from collections import defaultdict
 
 from matplotlib import pyplot as plt
 from datetime import date
 from Film import Film
-import MyException
 from MyException import *
 
 
@@ -19,7 +17,7 @@ class Kolekcja:
         self.sortujKolejnosc:bool = False
         if sciezka is not None:
             try:
-                if ".csv" not in sciezka:
+                if not sciezka.lower().endswith(".csv"):
                     raise InvalidFileFormat
                 with open(sciezka, encoding="utf8") as f:
                     for linijka in f.readlines():
@@ -36,7 +34,7 @@ class Kolekcja:
                             raise InvalidRatingScale
                         today = int(date.today().strftime("%Y"))
                         if int(podziel[2]) < 1895 or int(podziel[2]) > today:
-                            raise InvalidRatingScale
+                            raise InvalidMovieYear
                         self.dodajFilm(tytul=podziel[0],
                                        rezyser=podziel[1],
                                        rok_produkcji=int(podziel[2]),
@@ -78,7 +76,7 @@ class Kolekcja:
         except MovieAlreadyExists:
             print(f"Film {film.tytul} juz istnieje w kolekcji\n")
 
-    def wyswietlKolekcje(self) -> None:
+    def wyswietlKolekcje(self) -> list[Film]:
         wyswietl_filmy = self.filmy[:]
         if self.sortujAtrybut is not None:
             key = None
@@ -101,6 +99,7 @@ class Kolekcja:
             if filtrujTytul and filtrujGatunek and filtrujRok and filtrujStatus:
                 print(f"[{id + 1}] {str(film)}")
         print("\n-----------------------------------\n")
+        return wyswietl_filmy
 
     def usunFilm(self, film: Film) -> str:
         try:
@@ -112,7 +111,7 @@ class Kolekcja:
             raise MovieDoesNotExist
 
         except MovieDoesNotExist:
-            print("Nie udało się usunąć filmu z \n")
+            print("Nie udało się usunąć filmu\n")
 
     def edytujFilm(self, film: Film) -> None:
         print(str(film))
@@ -140,7 +139,16 @@ class Kolekcja:
                 film.rezyser = input("Podaj nowego rezysera:\n")
             case "3":
                 print(f"Obecny rok produkcji: {film.rok_produkcji}")
-                film.rok_produkcji = input("Podaj nowy rok produkcji:\n")
+                try:
+                    rok = int(input("Podaj nowy rok produkcji:\n"))
+                    today = int(date.today().strftime("%Y"))
+                    if rok < 1895 or rok > today:
+                        raise InvalidMovieYear
+                    film.rok_produkcji = rok
+                except ValueError:
+                    print("Nieprawidłowy rok")
+                except InvalidMovieYear:
+                    print("Rok nie moze byc wczesniejszy niz 1895 albo pozniejszy niz obecny")
             case "4":
                 print(f"Obecny Gatunek: {film.gatunek}")
                 kopia_gatunku = film.gatunek
@@ -157,7 +165,7 @@ class Kolekcja:
                 print(f"Obecny status: {film.status}")
                 status = input("Podaj nowy status: watched/unwatched\n")
                 try:
-                    if not (status.lower().strip() == "watched" or status.lower().strip() == "unwatched"):
+                    if status.lower().strip() not in ("watched", "unwatched"):
                         raise WrongStatus
                     film.status = status
                 except WrongStatus:
@@ -178,8 +186,11 @@ class Kolekcja:
                 film.opis = input("\nPodaj nowy opis:\n")
 
     def exportujDoPliku(self):
+        if not self.filmy:
+            print("Brak filmow do zapisu")
+            return
         try:
-            with open(input("Podaj nazwe pliku:\n") + ".csv","w") as w:
+            with open(input("Podaj nazwe pliku:\n") + ".csv","w",encoding="utf8") as w:
                 for film in self.filmy:
                     linijka = f"{film.tytul};{film.rezyser};{film.rok_produkcji};{film.gatunek};{film.status};{film.ocena};{film.opis.strip()};{film.komentarze}"
                     w.write(linijka + '\n')
@@ -213,7 +224,7 @@ class Kolekcja:
                         print("Nie podano liczby")
                     except Exception as e:
                         print(e)
-                case "4.":
+                case "4":
                     status = input("Podaj status (watched/unwatched):\n")
                     try:
                         if not (status.lower().strip() == "watched" or status.lower().strip() == "unwatched"):
